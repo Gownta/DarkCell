@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# ensure that $DARK_CELL_ROOT is a valid directory, and go to it
+if [ -z "$DARK_CELL_ROOT" ] ; then echo "variable \$DARK_CELL_ROOT not set" ; exit 1 ; fi
+cd $DARK_CELL_ROOT
+if [ $? -ne 0 ] ; then echo "\$DARK_CELL_ROOT is not a valid directory" ; exit 1 ; fi
+#
+
+mkdir -p build
+cp -ruf src/* build
+
+cd build
+make
+if [ $? -ne 0 ] ; then echo "make failed" ; exit 1 ; fi
+cp dcc ../execs
+

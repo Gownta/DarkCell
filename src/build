@@ -1,9 +1,0 @@
-#!/bin/bash
-
-DIR=`dirname ${BASH_SOURCE[0]}`
-mkdir -p "$DIR/bin"
-cp -ruf "$DIR" "$DIR/bin"
-
-cd "$DIR/bin"
-make
-

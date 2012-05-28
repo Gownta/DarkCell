@@ -1,3 +1,4 @@
 dcc
 *.o
 *.d
+build/*
