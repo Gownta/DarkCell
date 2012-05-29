@@ -1,20 +1,23 @@
 #include "FileIO.h"
 #include <string>
 #include <fstream>
-#include <streambuf>
+#include <iostream>
 
 using namespace std;
 
 string strFromFile(const char * filename) {
-  ifstream t(filename);
-  string str;
-
-  t.seekg(0, ios::end); 
-  str.reserve(t.tellg());
-  t.seekg(0, ios::beg);
-
-  str.assign((istreambuf_iterator<char>(t)), istreambuf_iterator<char>());
-
-  return str;
+  ifstream file (filename , ios::in|ios::binary|ios::ate);
+  if (!file.is_open()) {
+    cerr << "file '" << filename << "' cannot be opened for reading; aborting compilation" << endl;
+    exit(1);
+  }
+  auto size = file.tellg();
+  char * memblock = new char [size];
+  file.seekg (0, ios::beg);
+  file.read (memblock, size);
+  file.close();
+  string s(memblock);
+  delete[] memblock;
+  return s;
 }
 
