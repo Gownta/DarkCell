@@ -1,10 +1,13 @@
 #include <iostream>
-#include <fstream>
 #include <string>
+#include <vector>
+
+#include "FileIO.h"
 
 using namespace std;
 
 int main (int argc, const char ** argv) {
+
   //====================================
   // Usage
 
@@ -12,6 +15,15 @@ int main (int argc, const char ** argv) {
     cerr << "Usage: " << argv[0] << " filename [filename ...]" << endl;
     return 1;
   }
+
+  //====================================
+  // Read files
+
+  vector<string> files(argc - 1);
+  for (int i = 1; i < argc; ++i) files[i - 1] = strFromFile(argv[i]);
+
+  //====================================
+  // DEV
 
   return 4;
 }

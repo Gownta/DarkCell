@@ -1,13 +1,35 @@
 #!/bin/bash
 
-# ensure that $DARK_CELL_ROOT is a valid directory, and go to it
-if [ -z "$DARK_CELL_ROOT" ] ; then echo "variable \$DARK_CELL_ROOT not set" ; exit 1 ; fi
+################################################################################
+### Error handling
+
+# trap and abort-on Ctrl-c
+control_c()
+{
+  echo "Build aborted"
+  exit 1
+}
+trap control_c SIGINT
+
+
+# ensure that $DARK_CELL_ROOT is a valid directory
+if [ ! -d "$DARK_CELL_ROOT" ] ; then echo "\$DARK_CELL_ROOT is not a valid directory" ; exit 1 ; fi
+
+
 cd $DARK_CELL_ROOT
-if [ $? -ne 0 ] ; then echo "\$DARK_CELL_ROOT is not a valid directory" ; exit 1 ; fi
-#
+################################################################################
+### Actual Script
+
+# if the first argument is clean, then clean instead of building
+if [ "$1" = "clean" ] ; then
+  rm -rf build
+  rm execs/dcc
+  exit 0
+fi
 
 mkdir -p build
 cp -ruf src/* build
+cp execs/Makefile build
 
 cd build
 make

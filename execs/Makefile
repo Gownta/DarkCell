@@ -1,7 +1,7 @@
 CXX = g++
-CXXFLAGS = -O2 -g -Wall -MMD -std=gnu++0x -Wno-deprecated
+CXXFLAGS = -O2 -g -Wall -MMD -std=gnu++0x -Wno-deprecated $(addprefix -I, $(shell find . -type d))
 
-OBJECTS = DarkCell.o
+OBJECTS = $(patsubst %.cpp,%.o,$(wildcard **/*.cpp)) DarkCell.o
 
 DEPENDS = ${OBJECTS:.o=.d}
 EXEC = dcc
