@@ -1,12 +1,27 @@
-DarkCell
-========
+DarkCell Compiler
+=================
+=================
 
-TODO:
-add this directory as DARK_CELL_ROOT
+@author: Nicholas J. Ormrod
 
-Source code is in src/
-Executables are in execs/
-Build space is in build/
 
-Status:
-On Night.
+========================================
+SETUP:
+
+Export this directory as DARK_CELL_ROOT
+Add $DARK_CELL_ROOT/execs to PATH
+Run 'build' (found in execs/)
+
+
+========================================
+LAYOUT:
+
+src/
+  This is where all the source code is
+
+execs/
+  This is where all the high-level scripts are located
+
+build/
+  This is a temporary directory, used by the build script
+
