@@ -25,3 +25,6 @@ execs/
 build/
   This is a temporary directory, used by the build script
 
+test/
+  This directory contains test files and scripts
+
