@@ -11,6 +11,21 @@ control_c()
 }
 trap control_c SIGINT
 
+# exit of command fails
+try()
+{
+  # run the command
+  $@
+
+  # save the exit code
+  __exit_code__=$?
+
+  # check the exit code
+  if [ $__exit_code__ -ne 0 ] ; then
+    exit $__exit_code__
+  fi
+}
+
 
 # ensure that $DARK_CELL_ROOT is a valid directory
 if [ ! -d "$DARK_CELL_ROOT" ] ; then echo "\$DARK_CELL_ROOT is not a valid directory" ; exit 1 ; fi
@@ -32,7 +47,7 @@ cp -ruf src/* build
 cp execs/Makefile build
 
 cd build
-make
-if [ $? -ne 0 ] ; then echo "make failed" ; exit 1 ; fi
+try make
+
 cp dcc ../execs
 
