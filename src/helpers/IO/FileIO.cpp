@@ -4,8 +4,6 @@
 #include <fstream>
 #include <iostream>
 
-using namespace std;
-
 string strFromFile(const char * filename) {
   ifstream file (filename , ios::in|ios::binary|ios::ate);
   if (!file.is_open()) {

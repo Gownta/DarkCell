@@ -38,13 +38,13 @@ cd $DARK_CELL_ROOT
 # if the first argument is clean, then clean instead of building
 if [ "$1" = "clean" ] ; then
   rm -rf build
-  rm execs/dcc
+  rm -f execs/dcc
   exit 0
 fi
 
 mkdir -p build
 cp -ruf src/* build
-cp execs/Makefile build
+cp -u execs/Makefile build
 
 cd build
 try make

@@ -1,13 +1,19 @@
 CXX = g++
 CXXFLAGS = -O2 -g -Wall -MMD -std=gnu++0x -Wno-deprecated $(addprefix -I, $(shell find . -type d))
 
-OBJECTS = $(patsubst %.cpp,%.o,$(wildcard **/*.cpp)) $(patsubst %.cpp,%.o,$(wildcard *.cpp))
-
+SOURCES = $(shell find . -type f -name '*.cpp')
+OBJECTS = ${SOURCES:.cpp=.o}
 DEPENDS = ${OBJECTS:.o=.d}
+
 EXEC = dcc
 
 ${EXEC} : ${OBJECTS}
-	${CXX} $^ -o $@
+	@echo "building $@"
+	@${CXX} $^ -o $@
+
+%.o : %.cpp
+	@echo "compiling $@"
+	@${CXX} -c ${CXXFLAGS} $< -o $@
 
 ${OBJECTS} : Makefile
 

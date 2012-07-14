@@ -3,8 +3,7 @@
 #include <iomanip>
 #include <iostream>
 
-using namespace std;
-namespace parse {
+namespace parser {
 
 void parse(const string & file) {
   size_t index = 0;

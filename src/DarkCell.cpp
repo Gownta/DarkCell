@@ -27,7 +27,7 @@ int main (int argc, const char ** argv) {
   // Parse files
 
   for (auto & file : files) {
-    parse::parse(file);
+    parser::parse(file);
   }
 
   //====================================
