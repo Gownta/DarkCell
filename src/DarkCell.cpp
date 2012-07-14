@@ -28,6 +28,7 @@ int main (int argc, const char ** argv) {
 
   for (auto & file : files) {
     parser::parse(file);
+    parser::organize(file);
   }
 
   //====================================

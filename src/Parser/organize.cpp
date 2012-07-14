@@ -27,7 +27,15 @@ LWS getLeadingWS(slice<char> & file) {
 }
 
 Line organizeLine(slice<char> & file, stack<size_t> & indents) {
-  return "Hello";
+  // FIXME for the moment, lines are physical lines, and we don't support
+  // heredocs or herecomments
+  
+  int index;
+  for (index = 0; file[index] != '\n' && file[index] != '\0'; ++index);
+  Line line(file.data(), index);
+  file.advance(index);
+  if (file[0] == '\n') file.advance(1);
+  return line;
 }
 
 Block organizeBlock(slice<char> & file, stack<size_t> & indents) {
@@ -44,7 +52,7 @@ Block organizeBlock(slice<char> & file, stack<size_t> & indents) {
 
     // ignore empty lines
     if (file[lws.index] == '\n') {
-      file.advance(lws.index);
+      file.advance(lws.index + 1);
       continue;
     }
 
@@ -75,7 +83,7 @@ Block organizeBlock(slice<char> & file, stack<size_t> & indents) {
   }
 }
 
-list<Suite> organize(const string & file) {
+Block organize(const string & file) {
   // LATER possibly ignore leading #!...
 
   // Since a program is a block, organize it as so.

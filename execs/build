@@ -35,8 +35,8 @@ cd $DARK_CELL_ROOT
 ################################################################################
 ### Actual Script
 
-# if the first argument is clean, then clean instead of building
-if [ "$1" = "clean" ] ; then
+# if the first argument is wipe, then wipe instead of building
+if [ "$1" = "wipe" ] ; then
   rm -rf build
   rm -f execs/dcc
   exit 0
@@ -47,7 +47,7 @@ cp -ruf src/* build
 cp -u execs/Makefile build
 
 cd build
-try make
+try make $@
 
 cp dcc ../execs
 

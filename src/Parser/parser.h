@@ -16,8 +16,7 @@ namespace parser {
  * Blocks are made up of lines and nested blocks. Like Python, these are 
  * called SUITES.
  *
- * LINES are strings. The leading whitespace, which was used to
- * determine how the line was blocked, is removed.
+ * LINES are strings.
  *
  * Lines are logical, not physical. See
  * docs.python.org/reference/lexical_analysis.html
