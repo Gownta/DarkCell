@@ -3,16 +3,18 @@
 %option noyywrap
 
 	#include "Token.h"
-	extern void tokenize(Kind, const char *, size_t);
-	#define TOK(k) tokenize((k), yytext, yyleng)
+	namespace parser {
+          extern void tokenize(Kind, const char *, size_t);
+        }
+	#define TOK(k) parser::tokenize((k), yytext, yyleng)
 
-NL  [[:space:]]{-}[[:blank:]] /* newline characters */
-DQC [^\n"\\]|(\\.) /* characters in a double-quoted string */
-SQC [^\n"\\]|(\\.) /* characters in a single-quoted string */
+NL  [\n\r\f]
+DQC [^\n"\\]|(\\.)
+SQC [^\n"\\]|(\\.)
 
 %%
 
-([[:blank:]]|(\\{NL})+ TOK(WHITESPACE);
+([[:blank:]]|(\\{NL}))+ TOK(WHITESPACE);
 {NL} TOK(NEWLINE);
 
 \"{DQC}*\" TOK(DOUBLEQUOTE_STRING);
@@ -20,7 +22,7 @@ SQC [^\n"\\]|(\\.) /* characters in a single-quoted string */
 \' TOK(SINGLE_QUOTE);
 \" TOK(DOUBLE_QUOTE);
 
-\{#(.{-}(#/\}))*#} TOK(COMMENT);
+\{#([^#\n]|(#[^}\n]))*#*\} TOK(COMMENT);
 ##.* TOK(COMMENT);
 \{# TOK(OPEN_COMMENT);
 #\} TOK(CLOSE_COMMENT);
@@ -29,3 +31,11 @@ SQC [^\n"\\]|(\\.) /* characters in a single-quoted string */
 [[:digit:]]+ TOK(PARTIAL);
 
 . TOK(PARTIAL);
+
+%%
+
+/* Suppress unused warnings */
+void unused___fun() {
+  unused___fun();
+  yyunput(1,NULL);
+}

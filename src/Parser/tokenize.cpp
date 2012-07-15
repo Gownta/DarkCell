@@ -7,8 +7,10 @@ extern void yyrestart(FILE *);
 
 namespace parser {
 
+static list<Token> tokens;
 void tokenize(Kind kind, const char * data, size_t length) {
-  cout << "Token " << kind << ": '" << string(data, length) << "'" << endl;
+  //cout << "Token " << kind << ": '" << string(data, length) << "'" << endl;
+  tokens.emplace_back(kind, string(data, length));
 }
 
 list<Token> tokenize(const char * filename) {
@@ -16,7 +18,9 @@ list<Token> tokenize(const char * filename) {
   if (f == NULL) ERROR("could not open file");
   yyrestart(f);
   yylex();
-  return list<Token>();
+  list<Token> ret;
+  ret.swap(tokens); // this clears tokens
+  return ret;
 }
 
 }

@@ -18,17 +18,10 @@ int main (int argc, const char ** argv) {
   }
 
   //====================================
-  // Read files
-
-  vector<string> files(argc - 1);
-  for (int i = 1; i < argc; ++i) files[i - 1] = strFromFile(argv[i]);
-
-  //====================================
   // Parse files
 
-  for (auto & file : files) {
-    parser::parse(file);
-    parser::organize(file);
+  for (int i = 1; i < argc; ++i) {
+    parser::tokenize(argv[i]);
   }
 
   //====================================
