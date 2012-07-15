@@ -28,7 +28,7 @@ struct Token {
 
   Token(Kind kind, string lexeme) : kind(kind), lexeme(lexeme) {}
 
-  operator string();
+  operator string() const;
 };
 ostream & operator<<(ostream & os, const Token &);
 

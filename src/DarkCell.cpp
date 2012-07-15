@@ -21,7 +21,9 @@ int main (int argc, const char ** argv) {
   // Parse files
 
   for (int i = 1; i < argc; ++i) {
-    parser::tokenize(argv[i]);
+    auto toks = parser::tokenize(argv[i]);
+    auto block = parser::organize(toks);
+    parser::print(block);
   }
 
   //====================================

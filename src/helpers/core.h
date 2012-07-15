@@ -14,3 +14,4 @@ do {                                                  \
        << __LINE__ << ")" << endl;                    \
   exit(1);                                            \
 } while (false)
+

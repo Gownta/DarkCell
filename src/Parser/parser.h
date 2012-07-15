@@ -10,10 +10,8 @@
 namespace parser {
 
 list<Token> tokenize(const char * filename);
+Block organize(list<Token> & tokens);
 
-Block organize(const string & file);
-
-void parse(const string & file);
 
 }
 

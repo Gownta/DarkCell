@@ -8,91 +8,135 @@
 
 namespace parser {
 
-// the number and total length of non-newline whitespace
-struct LWS { size_t index, indent; };
+size_t lws(const Token & ws) {
+  if (ws.kind != WHITESPACE) ERROR("ICE");
 
-LWS getLeadingWS(slice<char> & file) {
-  size_t index;
-  size_t size = 0;
-  for (index = 0; ; ++index) switch (file[index]) {
-    case ' ':
-      size += 1;
-      break;
-    case '\t':
-      size += 8 - size % 8;
-      break;
+  size_t ret = 0;
+  for (size_t i = 0; i < ws.lexeme.size(); ++i) {
+    switch (ws.lexeme[i]) {
+      case ' ': ret += 1; break;
+      case '\t': ret += 8 - ret % 8;
+      default: goto EOL;
+    }
+  } EOL:
+  return ret;
+}
+
+static bool isOpenParen(const string & str) {
+  if (str.length() != 1) return false;
+  switch (str[0]) {
+    case '[':
+    case '{':
+    case '(':
+      return true;
     default:
-      return { index, size };
+      return false;
+  }
+}
+static bool isCloseParen(const string & str) {
+  if (str.length() != 1) return false;
+  switch (str[0]) {
+    case ']':
+    case '}':
+    case ')':
+      return true;
+    default:
+      return false;
   }
 }
 
-Line organizeLine(slice<char> & file, stack<size_t> & indents) {
-  // FIXME for the moment, lines are physical lines, and we don't support
-  // heredocs or herecomments
-  
-  int index;
-  for (index = 0; file[index] != '\n' && file[index] != '\0'; ++index);
-  Line line(file.data(), index);
-  file.advance(index);
-  if (file[0] == '\n') file.advance(1);
-  return line;
+static bool balance(const string & p1, const string & p2) {
+  if (p1 == "(" && p2 == ")") return true;
+  if (p1 == "{" && p2 == "}") return true;
+  if (p1 == "[" && p2 == "]") return true;
+  return false;
 }
 
-Block organizeBlock(slice<char> & file, stack<size_t> & indents) {
-  // A block is a list of suites
-  Block block;
+static Line organizeLine(list<Token>::const_iterator & it, list<Token>::const_iterator & end, stack<size_t> & indents) {
+  Line ret;
+
+  if (it == end) return ret;
+
+  size_t indent = 0;
+  if (it->kind == WHITESPACE) {
+    indent = lws(*it);
+    ++it;
+  }
+
+  stack<string> parens;
+
+  for (;; ++it) {
+    // return if inputs expended
+    if (it == end) return ret;
+
+    switch (it->kind) {
+      case WHITESPACE:
+        indent = indent + 0;
+        // TODO ensure any newlines are followed by at least indent space
+        break;
+      case COMMENT:
+        break;
+      case NEWLINE:
+        if (parens.empty()) {
+          ++it;
+          return ret;
+        }
+        ret.push_back(*it);
+        break;
+      default:
+        ret.push_back(*it);
+        if (isOpenParen(*it)) {
+          parens.push(*it);
+        }
+        else if (isCloseParen(*it)) {
+          if (parens.empty() || !balance(parens.top(), *it)) {
+            ERROR("Unbalanced parenthesis");
+          }
+          parens.pop();
+        }
+    }
+  }
+}
+
+static Block organizeBlock(list<Token>::const_iterator & it, list<Token>::const_iterator & end, stack<size_t> & indents) {
+  Block ret;
 
   for (;;) {
-    auto lws = getLeadingWS(file);
-    
-    // stop if EOF has been reached
-    if (file[lws.index] == '\0') {
-      return block;
-    }
+    // return if inputs expended
+    if (it == end) return ret;
 
-    // ignore empty lines
-    if (file[lws.index] == '\n') {
-      file.advance(lws.index + 1);
-      continue;
-    }
+    // get the indent
+    size_t indent = it->kind == WHITESPACE ? lws(*it) : 0;
 
-    // parse a line on equal indent
-    // parse a block on greater indent
+    // organize line on equal indent
+    // organize block on greater indent
     // return on lesser indent
-    if (indents.top() == lws.indent) {
-      file.advance(lws.index);
-      block.push_back(organizeLine(file, indents));
+    if (indents.top() == indent) {
+      ret.push_back(organizeLine(it, end, indents));
     }
-    else if (indents.top() < lws.indent) {
-      indents.push(lws.indent);
-      block.push_back(organizeBlock(file, indents));
+    else if (indents.top() < indent) {
+      indents.push(indent);
+      ret.push_back(organizeBlock(it, end, indents));
     }
-    else /* indents.top() > lws.indent */ {
+    else /*indents.top() > indent*/ {
       indents.pop();
 
-      if (indents.top() < lws.indent) {
-        ERROR("Inconsistent indentation");
-        // TODO
-        // - more descriptive error message
-        // - assume that its indent was actually indents.top(); continue parsing
-        //   for more errors
-      }
+      if (indents.top() < indent) ERROR("Inconsistent indent");
+      // for continuity, assume equal to top; get more errors
 
-      return block;
+      return ret;
     }
   }
 }
 
-Block organize(const string & file) {
-  // LATER possibly ignore leading #!...
-
-  // Since a program is a block, organize it as so.
-  // The program block must be at indent 0.
-  slice<char> iterator(file.data(), file.size());
+Block organize(list<Token> & tokens) {
   stack<size_t> indents;
   indents.push(0);
 
-  return organizeBlock(iterator, indents);
+  list<Token>::const_iterator start = tokens.cbegin();
+  list<Token>::const_iterator end = tokens.cend();
+
+  return organizeBlock(start, end, indents);
 }
 
 }

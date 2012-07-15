@@ -1,11 +1,12 @@
 #pragma once
 #include "core.h"
 
-#include <string>
+#include "Token.h"
+#include <list>
 
 namespace parser {
 
-typedef string Line;
+typedef list<Token> Line;
 struct Suite;
 typedef list<Suite> Block;
 
@@ -36,6 +37,8 @@ public:
     ERROR("getBlock on a Line");
   }
 };
+
+void print(const Suite & suite);
 
 }
 
