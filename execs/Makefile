@@ -10,21 +10,24 @@ DEPENDS = ${OBJECTS:.o=.d}
 EXEC = dcc
 
 ${EXEC} : ${OBJECTS}
-	@echo "building $@"
+	@echo "building   $@"
 	@${CXX} $^ -o $@
 
 %.o : %.cpp
-	@echo "compiling $<"
+	@echo "compiling  $<"
 	@${CXX} -c ${CXXFLAGS} $< -o $@
 
 %.cpp : %.cpp.py
 	@echo "generating $@"
 	@python $^
 
-${OBJECTS} : Makefile
+# ${OBJECTS} : Makefile
+# ${PYSRCS} : Makefile
 
 clean :
-	rm -f ${DEPENDS} ${OBJECTS} ${PYSRCS} ${EXEC}
+	@rm -f ${DEPENDS} ${OBJECTS} ${PYSRCS} ${EXEC}
 
 -include ${DEPENDS}
+
+.SECONDARY : ${PYSRCS}
 

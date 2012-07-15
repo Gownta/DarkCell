@@ -1,0 +1,31 @@
+/* This is a FLEX file describing the simple tokens of DC */
+
+%option noyywrap
+
+	#include "Token.h"
+	extern void tokenize(Kind, const char *, size_t);
+	#define TOK(k) tokenize((k), yytext, yyleng)
+
+NL  [[:space:]]{-}[[:blank:]] /* newline characters */
+DQC [^\n"\\]|(\\.) /* characters in a double-quoted string */
+SQC [^\n"\\]|(\\.) /* characters in a single-quoted string */
+
+%%
+
+([[:blank:]]|(\\{NL})+ TOK(WHITESPACE);
+{NL} TOK(NEWLINE);
+
+\"{DQC}*\" TOK(DOUBLEQUOTE_STRING);
+\'{SQC}*\' TOK(SINGLEQUOTE_STRING);
+\' TOK(SINGLE_QUOTE);
+\" TOK(DOUBLE_QUOTE);
+
+\{#(.{-}(#/\}))*#} TOK(COMMENT);
+##.* TOK(COMMENT);
+\{# TOK(OPEN_COMMENT);
+#\} TOK(CLOSE_COMMENT);
+
+[[:alpha:]]+ TOK(PARTIAL);
+[[:digit:]]+ TOK(PARTIAL);
+
+. TOK(PARTIAL);

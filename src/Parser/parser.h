@@ -5,24 +5,11 @@
 #include <list>
 
 #include "Suite.h"
+#include "Token.h"
 
 namespace parser {
 
-/**
- * DC programs are organized based on indentation.
- *
- * An indented section of code is called a BLOCK.
- *
- * Blocks are made up of lines and nested blocks. Like Python, these are 
- * called SUITES.
- *
- * LINES are strings.
- *
- * Lines are logical, not physical. See
- * docs.python.org/reference/lexical_analysis.html
- *
- * The entire program is a block.
- */
+list<Token> tokenize(const char * filename);
 
 Block organize(const string & file);
 

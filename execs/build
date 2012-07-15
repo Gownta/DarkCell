@@ -49,5 +49,7 @@ cp -u execs/Makefile build
 cd build
 try make $@
 
-cp dcc ../execs
+if [ -f "dcc" ] ; then
+  cp -u dcc ../execs
+fi
 
