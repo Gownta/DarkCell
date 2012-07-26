@@ -3,7 +3,6 @@
 #include <stack>
 #include <ctype.h>
 
-#include "slice.h"
 #include "Suite.h"
 
 namespace parser {
@@ -73,6 +72,7 @@ static Line organizeLine(list<Token>::const_iterator & it, list<Token>::const_it
       case WHITESPACE:
         indent = indent + 0;
         // TODO ensure any newlines are followed by at least indent space
+        ret.push_back(*it); // WS is important for token joining
         break;
       case COMMENT:
         break;

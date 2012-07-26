@@ -17,6 +17,7 @@ static void print(const Block & block, const string & indent) {
 static void print(const Line & line, const string & indent) {
   cout << indent;
   for (auto & tok : line) {
+    if (tok.kind == WHITESPACE) continue;
     cout << tok.lexeme << ' ';
   }
   cout << endl;

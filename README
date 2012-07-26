@@ -16,14 +16,17 @@ Run 'build' (found in execs/)
 LAYOUT:
 
 src/
-  This is where all the source code is
+  The source code.
 
 execs/
-  This is where all the high-level scripts are located
+  High-level scripts and executables.
 
 build/
-  This is a temporary directory, used by the build script
+  Temporary directory, used by the build script.
+
+docs/
+  Documentation.
 
 test/
-  This directory contains test files and scripts
+  Test files and scripts.
 

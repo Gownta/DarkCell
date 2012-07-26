@@ -1,0 +1,23 @@
+Compiler Stages
+---------------
+
+Partial Tokenization:
+  The input is converted into a list of tokens.
+  Strings and comments (including herestrings) are identified at this stage.
+  Other tokens are partial tokens. The string "++" will be tokenized as "+" "+".
+  (Later, partial tokens will be combined to form full tokens.)
+  Some character classes may never contain two tokens (e.g. [a-zA-Z]+); these are grouped at this stage.
+
+Line Organization and Blocking:
+  Logical lines are made up of multiple physical lines.
+  Rules for logical lines include the contents of {}, [], and ().
+  {} are turned into blocks.
+  Indented sections are turned into blocks.
+
+Syntax Parsing:
+  define-syntax and define-keyword are pattern matched and analyzed.
+  Syntax is matched against the token/block list.
+
+Line Parsing:
+  THINK MORE
+
