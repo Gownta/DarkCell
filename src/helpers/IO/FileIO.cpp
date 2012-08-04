@@ -10,11 +10,12 @@ string strFromFile(const char * filename) {
     cerr << "file '" << filename << "' cannot be opened for reading; aborting compilation" << endl;
     exit(1);
   }
-  auto size = file.tellg();
-  char * memblock = new char [size];
+  size_t size = file.tellg();
+  char * memblock = new char [size + 1];
   file.seekg (0, ios::beg);
   file.read (memblock, size);
   file.close();
+  memblock[size] = '\0';
   string s(memblock);
   delete[] memblock;
   return s;

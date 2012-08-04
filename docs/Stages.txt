@@ -3,21 +3,35 @@ Compiler Stages
 
 Partial Tokenization:
   The input is converted into a list of tokens.
-  Strings and comments (including herestrings) are identified at this stage.
-  Other tokens are partial tokens. The string "++" will be tokenized as "+" "+".
+  --Strings and comments (including herestrings) are identified at this stage.
+  {-Other-} tokens are partial tokens. The string "++" will be tokenized as "+" "+".
   (Later, partial tokens will be combined to form full tokens.)
   Some character classes may never contain two tokens (e.g. [a-zA-Z]+); these are grouped at this stage.
 
 Line Organization and Blocking:
+  A Block is a consecutive set of Lines each having greater-or-equal indentation to the first Line.
+  The program is analyzed as a Block.
+  Blocks are parsed by repeatedly consuming Lines and nested Blocks.
+  A Line is a Suite which is followed by a newline.
+  A Suite is parsed by consuming tokens until
+    a) a newline is encountered, or
+    b) a keyword token (possibly partial tokens) is encountered, in which case we call the keyword's function
+       keyword functions may
+         i) examine and consume input, including previous input and newlines
+         ii) call other keyword functions, as well as parse(Block|Line|Suite)
+         iii) consume its previous Line
+         iv) modify the local keyword table
+         v) return a Block, Suite, Line, or list of partial tokens
+  If a Line is followed by a nested Block, that nested Block become part of the Line.
+
   Logical lines are made up of multiple physical lines.
-  Rules for logical lines include the contents of {}, [], and ().
+  Rules for logical lines include the contents of {}, [], and (). (and not <>)
   {} are turned into blocks.
   Indented sections are turned into blocks.
 
 Syntax Parsing:
   define-syntax and define-keyword are pattern matched and analyzed.
-  Syntax is matched against the token/block list.
+  Syntax is matched against the token/block list via recursive descent.
+  If a token that is a define-macro'd symbol
 
-Line Parsing:
-  THINK MORE
 

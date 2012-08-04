@@ -22,8 +22,11 @@ int main (int argc, const char ** argv) {
 
   for (int i = 1; i < argc; ++i) {
     auto toks = parser::tokenize(argv[i]);
-    auto block = parser::organize(toks);
-    parser::print(block);
+    for (auto & tok : toks) {
+      cout << tok << endl;
+    }
+    //auto block = parser::organize(toks);
+    //parser::print(block);
   }
 
   //====================================

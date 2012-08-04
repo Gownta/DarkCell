@@ -11,7 +11,7 @@ control_c()
 }
 trap control_c SIGINT
 
-# exit of command fails
+# exit if command fails
 try()
 {
   # run the command
@@ -42,13 +42,16 @@ if [ "$1" = "wipe" ] ; then
   exit 0
 fi
 
+# ensure build/ contains the most up-to-date code
 mkdir -p build
 cp -ruf src/* build
 cp -u execs/Makefile build
 
+# make
 cd build
 try make $@
 
+# move the generated executable to execs
 if [ -f "dcc" ] ; then
   cp -u dcc ../execs
 fi

@@ -1,3 +1,4 @@
+#if 0
 #include "parser.h"
 
 #include <stdio.h>
@@ -9,7 +10,6 @@ namespace parser {
 
 static list<Token> tokens;
 void tokenize(Kind kind, const char * data, size_t length) {
-  //cout << "Token " << kind << ": '" << string(data, length) << "'" << endl;
   tokens.emplace_back(kind, string(data, length));
 }
 
@@ -24,4 +24,5 @@ list<Token> tokenize(const char * filename) {
 }
 
 }
+#endif
 
