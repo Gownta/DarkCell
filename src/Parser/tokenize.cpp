@@ -1,28 +1,80 @@
-#if 0
 #include "parser.h"
 
-#include <stdio.h>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <cctype>
 
-extern int yylex();
-extern void yyrestart(FILE *);
+#include "Token.h"
 
 namespace parser {
 
-static list<Token> tokens;
-void tokenize(Kind kind, const char * data, size_t length) {
-  tokens.emplace_back(kind, string(data, length));
+void tokenize(Kind, const char *, unsigned int) {}
+
+namespace {
+
+inline bool isNewline(char c) {
+  switch (c) {
+    case '\n':
+    case '\r':
+    case '\f':
+    case '\v':
+      return true;
+    default:
+      return false;
+  }
+}
+
+inline bool isWhitespace(char c) {
+  switch (c) {
+    case ' ':
+    case '\t':
+      return true;
+    default:
+      return false;
+  }
+}
+
 }
 
 list<Token> tokenize(const char * filename) {
-  FILE * f = fopen(filename, "r");
-  if (f == NULL) ERROR("could not open file");
-  yyrestart(f);
-  yylex();
+  // read the file as a char*
+  char * file;
+  size_t size;
+  {
+    ifstream File(filename, ios::in|ios::binary|ios::ate);
+    if (!File.is_open()) {
+      cerr << "file '" << filename << "' cannot be opened for reading; aborting compilation" << endl;
+      exit(1);
+    }
+    size = File.tellg();
+    char * memblock = new char[size + 1];
+    File.seekg(0, ios::beg);
+    File.read(memblock, size);
+    File.close();
+    memblock[size] = '\0';
+    file = memblock;
+  }
+
+  // munch until EOF
   list<Token> ret;
-  ret.swap(tokens); // this clears tokens
+  size_t idx = 0;
+  while (idx < size) {
+    auto start = idx;
+    Kind kind;
+    #define GRAB(f, k) if (f(file[idx])) { kind = (k); do { ++idx; } while (f(file[idx])); }
+    GRAB(isNewline, NEWLINE)
+    else GRAB(isWhitespace, WHITESPACE)
+    else GRAB(isalpha, PARTIAL)
+    else GRAB(isdigit, PARTIAL)
+    else { ++idx; kind = PARTIAL; }
+    #undef GRAB
+    ret.emplace_back(kind, string(file + start, idx - start));
+  }
+
+  delete[] file;
   return ret;
 }
 
 }
-#endif
 

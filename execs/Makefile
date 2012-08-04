@@ -3,7 +3,7 @@ CXXFLAGS = -O2 -g -Wall -MMD -std=gnu++0x -Wno-deprecated $(addprefix -I, $(shel
 
 PYGENS = $(shell find . -type f -name '*.cpp.py')
 PYSRCS = $(patsubst %.cpp.py, %.cpp, ${PYGENS})
-SOURCES = $(shell find . -type f -name '*.cpp') ${PYSRCS} lex.yy.cpp
+SOURCES = $(shell find . -type f -name '*.cpp') ${PYSRCS}
 OBJECTS = ${SOURCES:.cpp=.o}
 DEPENDS = ${OBJECTS:.o=.d}
 
@@ -20,10 +20,6 @@ ${EXEC} : ${OBJECTS}
 %.cpp : %.cpp.py
 	@echo "generating $@"
 	@python $^
-
-lex.yy.cpp : Parser/tokens.lang
-	@echo "generating $@"
-	@flex -olex.yy.cpp Parser/tokens.lang
 
 # ${OBJECTS} : Makefile
 # ${PYSRCS} : Makefile
